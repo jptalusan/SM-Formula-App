@@ -35,6 +35,7 @@ namespace SMFormulaProgram
 				TextBox textBox = new TextBox();
 				textBox.Location = new Point(pointX, pointY + 15);
 				textBox.Text = kvp.Value;
+				textBox.KeyPress += textBox1_KeyPress;
 				//Line
 				Label line = new Label();
 				line.Text = "________________________________________________________";
@@ -111,6 +112,21 @@ namespace SMFormulaProgram
 		{
 			Console.WriteLine("Cancel");
 			this.Close();
+		}
+
+		private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+				(e.KeyChar != '.'))
+			{
+				e.Handled = true;
+			}
+
+			// only allow one decimal point
+			if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+			{
+				e.Handled = true;
+			}
 		}
 	}
 }
