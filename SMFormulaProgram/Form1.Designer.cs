@@ -36,6 +36,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.updateConfigs = new System.Windows.Forms.Button();
 			this.export = new System.Windows.Forms.Button();
+			this.openPercentages = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -115,12 +116,23 @@
 			this.export.UseVisualStyleBackColor = true;
 			this.export.Click += new System.EventHandler(this.export_Click);
 			// 
+			// openPercentages
+			// 
+			this.openPercentages.Location = new System.Drawing.Point(584, 383);
+			this.openPercentages.Name = "openPercentages";
+			this.openPercentages.Size = new System.Drawing.Size(97, 23);
+			this.openPercentages.TabIndex = 9;
+			this.openPercentages.Text = "Percentages";
+			this.openPercentages.UseVisualStyleBackColor = true;
+			this.openPercentages.Click += new System.EventHandler(this.openPercentages_Click);
+			// 
 			// Form1
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(816, 417);
+			this.Controls.Add(this.openPercentages);
 			this.Controls.Add(this.export);
 			this.Controls.Add(this.updateConfigs);
 			this.Controls.Add(this.label1);
@@ -146,6 +158,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button updateConfigs;
 		private System.Windows.Forms.Button export;
+		private System.Windows.Forms.Button openPercentages;
 	}
 }
 

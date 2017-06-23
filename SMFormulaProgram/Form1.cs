@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Data;
 using System.Globalization;
 using System.Diagnostics;
+using ClosedXML.Excel;
 
 //TODO: Parse file name of input file and use that to save as output file
 //display output in grid display (currently being used by this app)
@@ -250,6 +251,18 @@ namespace SMFormulaProgram
 								else if (nameToCheck.Equals("Credit Card No.:")) // Name is equal to total (need to total and reset some values), get name of person (save it somewhere)
 								{
 									cardHolderName = dr[3] as string;
+									cardHolderName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cardHolderName.ToLower());
+									string[] tempName = cardHolderName.Split(' ');
+									string tempConcatenated = "";
+									for (int i = 0; i < tempName.Length; ++i)
+									{
+										if (tempName[i].Length == 1)
+										{
+											tempName[i] += ".";
+										}
+										tempConcatenated += tempName[i] + " ";
+									}
+									cardHolderName = tempConcatenated.Trim();
 									Console.WriteLine("Card Holder: " + cardHolderName);
 									string temp = dr[1] as string;
 									string substr = temp.Substring(temp.Length - 6);
@@ -345,20 +358,41 @@ namespace SMFormulaProgram
 		//TODO: add option to select where to save output
 		private void export_Click(object sender, EventArgs e)
 		{
-			var lines = new List<string>();
+			//var lines = new List<string>();
 
-			string[] columnNames = dtexcel.Columns.Cast<DataColumn>().
-											  Select(column => column.ColumnName).
-											  ToArray();
+			//string[] columnNames = dtexcel.Columns.Cast<DataColumn>().
+			//								  Select(column => column.ColumnName).
+			//								  ToArray();
 
-			var header = string.Join(",", columnNames);
-			lines.Add(header);
+			//var header = string.Join(",", columnNames);
+			//lines.Add(header);
 
-			var valueLines = dtexcel.AsEnumerable()
-							   .Select(row => string.Join(",", row.ItemArray));
-			lines.AddRange(valueLines);
+			//var valueLines = dtexcel.AsEnumerable()
+			//				   .Select(row => string.Join(",", row.ItemArray));
+			//lines.AddRange(valueLines);
 
-			File.WriteAllLines(fileName + "_output.csv", lines);
+			//File.WriteAllLines(fileName + "_output.csv", lines);
+
+			XLWorkbook wb = new XLWorkbook();
+			System.Data.DataTable dt = dtexcel;
+
+			string[] values = fileName.Split('_');
+			string date = values.Last();
+			wb.Worksheets.Add(dt, date);
+
+			string extension = System.IO.Path.GetExtension(fileName);
+			string result = fileName.Substring(0, fileName.Length - extension.Length);
+
+			wb.SaveAs(result + "_exported.xlsx");
+		}
+
+		private void openPercentages_Click(object sender, EventArgs e)
+		{
+			// Create a new instance of the Form2 class
+			Config settingsForm = new Config();
+
+			// Show the settings form
+			settingsForm.Show();
 		}
 	}
 }
