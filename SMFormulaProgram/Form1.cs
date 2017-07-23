@@ -15,9 +15,8 @@ using System.Globalization;
 using System.Diagnostics;
 using ClosedXML.Excel;
 
-//TODO: Parse file name of input file and use that to save as output file
-//display output in grid display (currently being used by this app)
-//TODO: Add button to open/edit configs
+//TODO: Match name arrangement/sort same as one that Dad uses para madali i-copy
+//use arraylist of name hard coded?
 //open any first sheet http://stackoverflow.com/questions/20618154/how-to-select-from-any-spreadsheet-in-excel-file-using-oledbdataadapter
 namespace SMFormulaProgram
 {
@@ -186,7 +185,6 @@ namespace SMFormulaProgram
 			{
 				try
 				{
-
 					con.Open();
 					System.Data.DataTable dtSchema = con.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
 					string Sheet1 = dtSchema.Rows[0].Field<string>("TABLE_NAME");
@@ -209,9 +207,9 @@ namespace SMFormulaProgram
 						//TODO: add option to display in string or double (totals)
 						dtexcel.Columns.Add("Card Number", typeof(double));
 						dtexcel.Columns.Add("Cardholder", typeof(string));
+						dtexcel.Columns.Add("Quarter", typeof(double));
 						dtexcel.Columns.Add("Old Total", typeof(double));
 						dtexcel.Columns.Add("New Total", typeof(double));
-						dtexcel.Columns.Add("Quarter", typeof(double));
 						dtexcel.Columns.Add("Diff", typeof(double));
 						while (dr.Read())
 						{
@@ -279,7 +277,7 @@ namespace SMFormulaProgram
 									dataRow["Old Total"] = Math.Round(oldCardHolderTotal, 2, MidpointRounding.AwayFromZero);
 									dataRow["New Total"] = Math.Round(cardHolderTotal, 2, MidpointRounding.AwayFromZero);
 									dataRow["Diff"] = Math.Round(cardHolderTotal - oldCardHolderTotal, 2, MidpointRounding.AwayFromZero);
-									dataRow["Quarter"] = Math.Round(cardHolderTotal / 4, 2, MidpointRounding.AwayFromZero);
+									dataRow["Quarter"] = Math.Ceiling(Math.Round(cardHolderTotal / 4, 2, MidpointRounding.AwayFromZero));
 									dtexcel.Rows.Add(dataRow);
 
 									cardHolderTotal = 0;
@@ -331,20 +329,20 @@ namespace SMFormulaProgram
 							//dataRow["Quarter"] = Math.Round(total / 4, 2, MidpointRounding.AwayFromZero);
 							dtexcel.Rows.Add(dataRow);
 							dataGridView1.DataSource = dtexcel;
+							dataGridView1.Columns["Quarter"].DefaultCellStyle.Format = "C";
+							dataGridView1.Columns["Quarter"].DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-PH");
 							dataGridView1.Columns["Old Total"].DefaultCellStyle.Format = "C";
 							dataGridView1.Columns["Old Total"].DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-PH");
 							dataGridView1.Columns["New Total"].DefaultCellStyle.Format = "C";
 							dataGridView1.Columns["New Total"].DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-PH");
 							dataGridView1.Columns["Diff"].DefaultCellStyle.Format = "C";
 							dataGridView1.Columns["Diff"].DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-PH");
-							dataGridView1.Columns["Quarter"].DefaultCellStyle.Format = "C";
-							dataGridView1.Columns["Quarter"].DefaultCellStyle.FormatProvider = System.Globalization.CultureInfo.GetCultureInfo("en-PH");
 						}
 					}
 				}
 				catch
 				{
-					MessageBox.Show("Drag Journal details file to program before clicking read file.");
+					MessageBox.Show("Drag Journal details file to program before clicking read file.\nTry opening and saving the excel file first and try again.");
 					Console.WriteLine("Wala");
 				}
 			}
@@ -358,21 +356,6 @@ namespace SMFormulaProgram
 		//TODO: add option to select where to save output
 		private void export_Click(object sender, EventArgs e)
 		{
-			//var lines = new List<string>();
-
-			//string[] columnNames = dtexcel.Columns.Cast<DataColumn>().
-			//								  Select(column => column.ColumnName).
-			//								  ToArray();
-
-			//var header = string.Join(",", columnNames);
-			//lines.Add(header);
-
-			//var valueLines = dtexcel.AsEnumerable()
-			//				   .Select(row => string.Join(",", row.ItemArray));
-			//lines.AddRange(valueLines);
-
-			//File.WriteAllLines(fileName + "_output.csv", lines);
-
 			XLWorkbook wb = new XLWorkbook();
 			System.Data.DataTable dt = dtexcel;
 
@@ -383,7 +366,8 @@ namespace SMFormulaProgram
 			string extension = System.IO.Path.GetExtension(fileName);
 			string result = fileName.Substring(0, fileName.Length - extension.Length);
 
-			wb.SaveAs(result + "_exported.xlsx");
+			Console.WriteLine(Path.GetDirectoryName(this.filePath));
+			wb.SaveAs(Path.GetDirectoryName(this.filePath) + "\\" + result + "_exported.xlsx");
 		}
 
 		private void openPercentages_Click(object sender, EventArgs e)

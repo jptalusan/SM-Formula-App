@@ -118,6 +118,7 @@
 			// 
 			// openPercentages
 			// 
+			this.openPercentages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.openPercentages.Location = new System.Drawing.Point(584, 383);
 			this.openPercentages.Name = "openPercentages";
 			this.openPercentages.Size = new System.Drawing.Size(97, 23);
